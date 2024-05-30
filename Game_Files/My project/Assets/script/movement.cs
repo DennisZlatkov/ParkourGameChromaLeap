@@ -4,26 +4,26 @@ public class PlayerController : MonoBehaviour
 {
     public float moveSpeed = 5f;
     public float jumpForce = 10f;
-    private Rigidbody2D rb;
+    private Rigidbody rb;
     private bool isGrounded;
     private int jumpCount = 0;
     public int maxJumpCount = 2; // Allow double jump
 
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody>();
     }
 
     void Update()
     {
         // Movement
         float move = Input.GetAxis("Horizontal");
-        rb.velocity = new Vector2(move * moveSpeed, rb.velocity.y);
+        rb.velocity = new Vector3(move * moveSpeed, rb.velocity.y, rb.velocity.z);
 
         // Jump
         if (Input.GetButtonDown("Jump") && (isGrounded || jumpCount < maxJumpCount))
         {
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+            rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
             jumpCount++;
         }
 
@@ -39,12 +39,11 @@ public class PlayerController : MonoBehaviour
 
     private bool IsGrounded()
     {
-        // Check if the player is grounded
-        // This can be improved with a better ground check logic, like raycasting
-        return rb.velocity.y == 0;
+        // Use a raycast to check if the player is grounded
+        return Physics.Raycast(transform.position, Vector3.down, 1.1f);
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+    void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
@@ -52,7 +51,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void OnCollisionExit2D(Collision2D collision)
+    void OnCollisionExit(Collision collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
