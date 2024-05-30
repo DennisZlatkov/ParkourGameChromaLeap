@@ -1,49 +1,43 @@
-using UnityEngine;
+﻿using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class HeroController : MonoBehaviour
 {
     public float moveSpeed = 5f;
     public float jumpForce = 10f;
-    private Rigidbody rb;
     private bool isGrounded;
-    private int jumpCount = 0;
-    public int maxJumpCount = 2; // Allow double jump
+    private Rigidbody2D rb;
+    private SpriteRenderer spriteRenderer;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     void Update()
     {
-        // Movement
-        float move = Input.GetAxis("Horizontal");
-        rb.velocity = new Vector3(move * moveSpeed, rb.velocity.y, rb.velocity.z);
+        // Движение наляво и надясно
+        float moveInput = Input.GetAxis("Horizontal");
+        rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
 
-        // Jump
-        if (Input.GetButtonDown("Jump") && (isGrounded || jumpCount < maxJumpCount))
+        // Флипване по x акцизата
+        if (moveInput > 0)
         {
-            rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
-            jumpCount++;
+            spriteRenderer.flipX = false;
+        }
+        else if (moveInput < 0)
+        {
+            spriteRenderer.flipX = true;
         }
 
-        // Reset jump count when grounded
-        if (isGrounded)
+        // Скок
+        if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded)
         {
-            jumpCount = 0;
+            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
         }
-
-        // Check if grounded
-        isGrounded = IsGrounded();
     }
 
-    private bool IsGrounded()
-    {
-        // Use a raycast to check if the player is grounded
-        return Physics.Raycast(transform.position, Vector3.down, 1.1f);
-    }
-
-    void OnCollisionEnter(Collision collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
@@ -51,7 +45,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void OnCollisionExit(Collision collision)
+    private void OnCollisionExit2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
