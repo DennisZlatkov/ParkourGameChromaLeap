@@ -490,7 +490,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5
-  jumpForce: 10
+  jumpForce: 5
+  animator: {fileID: 2107076633}
 --- !u!95 &2107076633
 Animator:
   serializedVersion: 5

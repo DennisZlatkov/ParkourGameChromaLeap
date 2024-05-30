@@ -7,6 +7,7 @@ public class HeroController : MonoBehaviour
     private bool isGrounded;
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
+    public Animator animator;
 
     void Start()
     {
@@ -35,6 +36,9 @@ public class HeroController : MonoBehaviour
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
         }
+
+        // Set animator parameter
+        animator.SetFloat("Speed", Mathf.Abs(moveInput));
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
